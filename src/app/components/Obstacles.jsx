@@ -37,7 +37,7 @@ const PlungerLane = () => {
 
   return (
     <RigidBody type="fixed" colliders="trimesh" interactionGroups={interactionGroups(0, 0)}>
-      <mesh position={[1.7, 0.05, 0.3]} rotation={[0, degToRad(90), 0]}>
+      <mesh position={[1.8, 0.05, 0.3]} rotation={[0, degToRad(90), 0]}>
         <planeGeometry args={[5.7, 0.1]} />
         {meshMaterial}
       </mesh>
