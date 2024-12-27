@@ -17,6 +17,8 @@ import { DragControls } from "@react-three/drei";
 import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
 import { Obstacles } from "./Obstacles";
+import { Flipper } from "./Flipper";
+
 function CameraController({ position }) {
   const { camera } = useThree();
 
@@ -49,6 +51,7 @@ export default function Scene() {
         <TableWalls />
         <Obstacles />
         <KinematicPlunger />
+        <Flipper />
         </group>
       </Physics>
     </>

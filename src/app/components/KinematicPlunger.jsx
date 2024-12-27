@@ -7,7 +7,16 @@ export const KinematicPlunger = () => {
   const plunger = useRef(null);
   const [isPressed, setIsPressed] = useState(false);
 
-  // Calculate the movement vector accounting for 7-degree rotation
+  // Add function to handle plunger press
+  const handlePlungerPress = () => {
+    if (!isPressed) {  // Only trigger if plunger isn't already pressed
+      setIsPressed(true);
+      // Reset plunger after 500ms (adjust timing as needed)
+      setTimeout(() => setIsPressed(false), 500);
+    }
+  };
+
+  // Calculate the movement vector accounting for 14-degree rotation
   const angle = degToRad(-14);
   const startPos = [1.94, -0.8, 3.7];
   const moveDistance = 1; // Distance to move when pressed
@@ -35,7 +44,7 @@ export const KinematicPlunger = () => {
   return (
     
       <RigidBody ref={plunger} type="kinematicPosition">
-        <mesh onClick={() => setIsPressed(!isPressed)}>
+        <mesh onClick={handlePlungerPress}>
           <boxGeometry args={[0.1, 0.1, 0.5]} />
           <meshBasicMaterial color="blue" />
         </mesh>

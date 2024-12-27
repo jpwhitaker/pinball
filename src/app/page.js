@@ -25,9 +25,9 @@ export default function Game() {
       <Leva />
       <Canvas shadows={true} camera={{fov: 45, zoom: 1.3}}>
         <Environment preset="apartment" />
-        <Physics debug={true}>
+        
           <Scene />
-        </Physics>
+        
       </Canvas>
     </div>
   );
