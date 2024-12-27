@@ -1,32 +1,38 @@
 import { useRef } from "react";
 import { usePrismaticJoint, interactionGroups, RigidBody } from "@react-three/rapier";
-import { Box } from "@react-three/drei";
-
+import { Box, Sphere } from "@react-three/drei";
 
 export default function Plunger() {
-  const plungerBody = useRef(null);
-  const anchorBody = useRef(null);
+  // Create references for the rigid bodies
+  const bodyA = useRef(null);
+  const bodyB = useRef(null);
 
-  usePrismaticJoint(plungerBody, anchorBody, [
-    [0,1,0],
-    [0,1,0],
-    [0, 1, 1]
+  // Create a prismatic joint that allows movement along the z-axis
+  usePrismaticJoint(bodyA, bodyB, [
+    [0, 0, -0.3],  // anchor in bodyA’s local space (the back of the 0.6 box)
+    [0, 0, 0],     // anchor in bodyB’s local space
+    [0, 0, 1]      // movement axis
   ]);
 
   return (
-    <>
-      <RigidBody 
-        ref={plungerBody} 
-        type="dynamic"
-        collisionGroups={interactionGroups(2)}
-      >
-        <Box args={[0.1, 0.1, 0.6]} rotation={[0, 0, 0]}>
+    <group position={[0, 1, 0]}>
+      {/* Body B sphere, at B’s local [0,0,0] */}
+      <RigidBody ref={bodyB} type="fixed">
+        <Sphere args={[0.05, 16, 16]} position={[0, 0, 0]}>
+          <meshBasicMaterial color="red" wireframe />
+        </Sphere>
+      </RigidBody>
+
+      {/* Body A sphere, placed at A’s local [0,0,-0.3] */}
+      <RigidBody ref={bodyA} type="dynamic">
+        <Box args={[0.1, 0.1, 0.6]} position={[0, 0, 0]}>
           <meshBasicMaterial color="blue" />
         </Box>
+        <Sphere args={[0.05, 16, 16]} position={[0, 0, -0.3]}>
+          <meshBasicMaterial color="green" wireframe />
+        </Sphere>
       </RigidBody>
-      <RigidBody ref={anchorBody} type="fixed">
-        <Box args={[0.1, 0.1, 0.1]}  visible={false} />
-      </RigidBody>
-    </>
+
+    </group>
   );
 }
