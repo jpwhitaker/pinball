@@ -3,18 +3,12 @@ import { useSpring, animated } from '@react-spring/three'
 import { degToRad } from "three/src/math/MathUtils";
 import { RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
+import { useKeyboardControls } from '@react-three/drei'
+
 export const KinematicPlunger = () => {
   const plunger = useRef(null);
   const [isPressed, setIsPressed] = useState(false);
-
-  // Add function to handle plunger press
-  const handlePlungerPress = () => {
-    if (!isPressed) {  // Only trigger if plunger isn't already pressed
-      setIsPressed(true);
-      // Reset plunger after 500ms (adjust timing as needed)
-      setTimeout(() => setIsPressed(false), 500);
-    }
-  };
+  const [subscribeKeys, getKeys] = useKeyboardControls();
 
   // Calculate the movement vector accounting for 14-degree rotation
   const angle = degToRad(-14);
@@ -33,6 +27,14 @@ export const KinematicPlunger = () => {
 
   useFrame(() => {
     if (plunger.current) {
+      const { plunger: plungerPressed } = getKeys();
+      
+      if (plungerPressed && !isPressed) {
+        setIsPressed(true);
+        // Reset plunger after 500ms
+        setTimeout(() => setIsPressed(false), 500);
+      }
+
       plunger.current.setNextKinematicTranslation({
         x: position.get()[0],
         y: position.get()[1],
@@ -42,13 +44,11 @@ export const KinematicPlunger = () => {
   });
 
   return (
-    
-      <RigidBody ref={plunger} type="kinematicPosition">
-        <mesh onClick={handlePlungerPress}>
-          <boxGeometry args={[0.1, 0.1, 0.5]} />
-          <meshBasicMaterial color="blue" />
-        </mesh>
-      </RigidBody>
-    
+    <RigidBody ref={plunger} type="kinematicPosition">
+      <mesh>
+        <boxGeometry args={[0.1, 0.1, 0.5]} />
+        <meshBasicMaterial color="blue" />
+      </mesh>
+    </RigidBody>
   );
 };
