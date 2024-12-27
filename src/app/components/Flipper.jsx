@@ -11,21 +11,25 @@ export const Flipper = () => {
 
   // Handle flipper activation
   const handleFlipperPress = () => {
-    if (!isPressed) {
-      setIsPressed(true);
-      setTimeout(() => setIsPressed(false), 100);
-    }
+    setIsPressed(true);
+  };
+
+  const handleFlipperRelease = () => {
+    setIsPressed(false);
   };
 
   // Position and rotation values
-  const startPos = [-0.65, 0.05, 2.4]; // Same as left drain position
-  const baseRotation = degToRad(-35); // Same angle as drain
-  const flipAngle = degToRad(45); // How far the flipper rotates when activated
+  const startPos = [-1, 0.05, 2.2];
+  const flipperWidth = 0.75;
+  const adjustedPos = [startPos[0], startPos[1], startPos[2]];
+  const floorTilt = degToRad(14);
+  const baseRotation = degToRad(-35);
+  const flipAngle = degToRad(60);
 
   // Create spring animation for rotation
   const { rotation } = useSpring({
     rotation: isPressed ? baseRotation + flipAngle : baseRotation,
-    config: { tension: 300, friction: 10 }
+    config: { tension: 1800, friction: 40 }
   });
 
   // Update flipper position in physics world
@@ -33,7 +37,7 @@ export const Flipper = () => {
     if (flipper.current) {
       flipper.current.setNextKinematicRotation(
         new THREE.Quaternion().setFromEuler(
-          new THREE.Euler(0, rotation.get(), 0)
+          new THREE.Euler(degToRad(14), rotation.get(), 0, 'XYZ')
         )
       );
     }
@@ -47,16 +51,33 @@ export const Flipper = () => {
       }
     };
 
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        handleFlipperRelease();
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, []);
 
   return (
-    <RigidBody ref={flipper} type="kinematicPosition" position={startPos}>
-      <mesh onClick={handleFlipperPress}>
-        <boxGeometry args={[0.75, 0.1, 0.1]} /> {/* Same width as drain */}
-        <meshStandardMaterial color="purple" />
-      </mesh>
-    </RigidBody>
-  );
+    <group>
+      <RigidBody ref={flipper} type="kinematicPosition" position={adjustedPos}>
+        <group >
+          <mesh onClick={handleFlipperPress} position={[flipperWidth / 2, 0, 0]}>
+            <boxGeometry args={[flipperWidth, 0.1, 0.1]} />
+            <meshStandardMaterial color="purple" />
+          </mesh>
+        </group>
+      </RigidBody>
+
+      
+      </group>
+      );
 }; 
