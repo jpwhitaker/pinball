@@ -8,7 +8,7 @@ export function TableWalls() {
 
   return (
     <>
-      <group rotation={[degToRad(7), 0, 0]}>
+      <group rotation={[0, 0, 0]}>
       {/* table floor */}
       <RigidBody type="fixed" position={[0, 0, 0]}>
         <Plane args={[4, 7]} position={[0, 0, 0]} rotation={[degToRad(-90), 0, 0]}></Plane>

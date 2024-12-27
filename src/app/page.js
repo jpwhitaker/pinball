@@ -22,8 +22,8 @@ export default function Game() {
 
   return (
     <div className="h-screen text-white bg-sky-100 relative">
-      <Leva collapsed />
-      <Canvas shadows={true}>
+      <Leva />
+      <Canvas shadows={true} camera={{fov: 45, zoom: 1.3}}>
         <Environment preset="apartment" />
         <Physics debug={true}>
           <Scene />
