@@ -7,7 +7,7 @@ import { degToRad, radToDeg } from "three/src/math/MathUtils";
 import { Environment } from "@react-three/drei";
 import ChromeBall from "./components/ChromeBall";
 import { TableWalls } from "./components/TableWalls";
-import Plunger from "./components/Plunger";
+import Plunger from "./components/KinematicPlunger";
 import { useRef } from "react";
 import { usePrismaticJoint } from "@react-three/rapier";
 import { MeshBasicMaterial } from "three";
@@ -32,17 +32,3 @@ export default function Game() {
     </div>
   );
 }
-
-
-
-const KinematicPlunger = () => {
-  return (
-    <group position={[0, 1, 0]}>
-    <RigidBody type="kinematicPosition">
-      <Box args={[0.1, 0.1, 0.5]}>
-        <meshBasicMaterial color="blue" />
-      </Box>
-    </RigidBody>
-    </group>
-  );
-};

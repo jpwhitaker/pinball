@@ -7,7 +7,8 @@ import { degToRad, radToDeg } from "three/src/math/MathUtils";
 import { Environment } from "@react-three/drei";
 import ChromeBall from "./ChromeBall";
 import { TableWalls } from "./TableWalls";
-import Plunger from "./Plunger";
+import { KinematicPlunger } from "./KinematicPlunger";
+import Plunger from "./KinematicPlunger";
 import { useRef, useEffect, useState } from "react";
 import { usePrismaticJoint } from "@react-three/rapier";
 import { MeshBasicMaterial } from "three";
@@ -15,7 +16,7 @@ import { Leva, useControls, button } from "leva";
 import { DragControls } from "@react-three/drei";
 import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
-
+import { Obstacles } from "./Obstacles";
 function CameraController({ position }) {
   const { camera } = useThree();
 
@@ -44,8 +45,9 @@ export default function Scene() {
         <ChromeBall />
         
         <OrbitControls />
-        <group rotation={[degToRad(7), 0, 0]}>
+        <group rotation={[degToRad(14), 0, 0]}>
         <TableWalls />
+        <Obstacles />
         <KinematicPlunger />
         </group>
       </Physics>
@@ -55,43 +57,4 @@ export default function Scene() {
 
 
 
-const KinematicPlunger = () => {
-  const plunger = useRef(null);
-  const [isPressed, setIsPressed] = useState(false);
 
-  // Calculate the movement vector accounting for 7-degree rotation
-  const angle = degToRad(-7);
-  const startPos = [1.94, -0.4, 3.7];
-  const moveDistance = 1; // Distance to move when pressed
-  
-  // Create spring animation with rotated coordinates
-  const { position } = useSpring({
-    position: isPressed ? [
-      startPos[0],
-      startPos[1] - (Math.sin(angle) * moveDistance),
-      startPos[2] - (Math.cos(angle) * moveDistance)
-    ] : startPos,
-    config: { tension: 180, friction: 12 }
-  });
-
-  useFrame(() => {
-    if (plunger.current) {
-      plunger.current.setNextKinematicTranslation({
-        x: position.get()[0],
-        y: position.get()[1],
-        z: position.get()[2]
-      });
-    }
-  });
-
-  return (
-    
-      <RigidBody ref={plunger} type="kinematicPosition">
-        <mesh onClick={() => setIsPressed(!isPressed)}>
-          <boxGeometry args={[0.1, 0.1, 0.5]} />
-          <meshBasicMaterial color="blue" />
-        </mesh>
-      </RigidBody>
-    
-  );
-};
