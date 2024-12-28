@@ -56,7 +56,7 @@ export const Flipper = ({ side = 'left' }) => {
 
   return (
     <group>
-      <RigidBody ref={flipper} type="kinematicPosition" position={adjustedPos} ccd={true}>
+      <RigidBody ref={flipper} type="kinematicPosition" position={adjustedPos}>
         <group>
           <mesh 
             onClick={handleFlipperPress} 
