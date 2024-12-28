@@ -12,8 +12,8 @@ export const KinematicPlunger = () => {
 
   // Calculate the movement vector accounting for 14-degree rotation
   const angle = degToRad(-14);
-  const startPos = [1.94, -0.8, 3.7];
-  const moveDistance = 1; // Distance to move when pressed
+  const startPos = [0.292, -0.122, 0.564];
+  const moveDistance = 0.152; // ~6 inches of movement
   
   // Create spring animation with rotated coordinates
   const { position } = useSpring({
@@ -22,7 +22,7 @@ export const KinematicPlunger = () => {
       startPos[1] - (Math.sin(angle) * moveDistance),
       startPos[2] - (Math.cos(angle) * moveDistance)
     ] : startPos,
-    config: { tension: 280, friction: 12 }
+    config: { tension: 980, friction: 12 }
   });
 
   useFrame(() => {
@@ -46,7 +46,7 @@ export const KinematicPlunger = () => {
   return (
     <RigidBody ref={plunger} type="kinematicPosition">
       <mesh>
-        <boxGeometry args={[0.1, 0.1, 0.5]} />
+        <boxGeometry args={[0.015, 0.015, 0.076]} />
         <meshBasicMaterial color="blue" />
       </mesh>
     </RigidBody>

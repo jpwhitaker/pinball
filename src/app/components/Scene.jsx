@@ -32,12 +32,12 @@ function CameraController({ position }) {
 }
 
 export default function Scene() {
-  const [cameraPosition, setCameraPosition] = useState([0, 8.5, 7]); // Default position
+  const [cameraPosition, setCameraPosition] = useState([0, 1.295, 1.067]); // Default position
 
   useControls({
-    "Default View": button(() => setCameraPosition([0, 8.5, 7])),
-    "Top Down": button(() => setCameraPosition([0, 15, 0])),
-    "Side View": button(() => setCameraPosition([-15, 0, 0])),
+    "Default View": button(() => setCameraPosition([0, 1.295, 1.067])),
+    "Top Down": button(() => setCameraPosition([0, 2.286, 0])),
+    "Side View": button(() => setCameraPosition([-2.286, 0, 0])),
   });
 
   return (
@@ -51,7 +51,7 @@ export default function Scene() {
           { name: 'plunger', keys: ['Space'] }
         ]}
       >
-        <Physics debug={true}>
+        <Physics debug={false}>
           <ChromeBall />
           <OrbitControls />
           <group rotation={[degToRad(14), 0, 0]}>

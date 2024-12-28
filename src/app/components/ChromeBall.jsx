@@ -7,7 +7,7 @@ export default function ChromeBall() {
     <RigidBody 
       colliders="ball" 
       restitution={0.7} 
-      position={[0, 2, 0]} 
+      position={[0, 0.305, 0]} 
       mass={0.08}
       linearDamping={0.1}
       angularDamping={0.1}
@@ -15,7 +15,7 @@ export default function ChromeBall() {
       ccd={true}
     >
       <mesh castShadow>
-        <sphereGeometry args={[0.08, 32, 32]} />
+        <sphereGeometry args={[0.012, 32, 32]} />
         <meshStandardMaterial metalness={1} roughness={0} />
       </mesh>
     </RigidBody>

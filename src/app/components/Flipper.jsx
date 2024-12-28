@@ -20,10 +20,12 @@ export const Flipper = ({ side = 'left' }) => {
     setIsPressed(false);
   };
 
+  const FLIPPER_LENGTH = 0.178; // Single source of truth for flipper length
+  
   // Position and rotation values based on side
-  const startPos = side === 'left' ? [-1, 0.05, 2.2] : [1, 0.05, 2.2];
-  const flipperWidth = 0.75;
-  const adjustedPos = [...startPos];
+  const startPos = side === 'left' 
+    ? [-FLIPPER_LENGTH, 0.0076, 0.335] 
+    : [FLIPPER_LENGTH, 0.0076, 0.335];
   const floorTilt = degToRad(14);
   const baseRotation = side === 'left' ? degToRad(-35) : degToRad(35);
   const flipAngle = side === 'left' ? degToRad(60) : degToRad(-60);
@@ -56,13 +58,13 @@ export const Flipper = ({ side = 'left' }) => {
 
   return (
     <group>
-      <RigidBody ref={flipper} type="kinematicPosition" position={adjustedPos}>
+      <RigidBody ref={flipper} type="kinematicPosition" position={startPos} ccd={true}>
         <group>
           <mesh 
             onClick={handleFlipperPress} 
-            position={[side === 'left' ? flipperWidth / 2 : -flipperWidth / 2, 0, 0]}
+            position={[side === 'left' ? FLIPPER_LENGTH/2 : -FLIPPER_LENGTH/2, 0, 0]}
           >
-            <boxGeometry args={[flipperWidth, 0.1, 0.1]} />
+            <boxGeometry args={[FLIPPER_LENGTH, 0.015, 0.015]} />
             <meshStandardMaterial color="purple" />
           </mesh>
         </group>
