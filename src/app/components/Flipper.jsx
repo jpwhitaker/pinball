@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from "react";
-import { useSpring } from '@react-spring/three'
 import { degToRad } from "three/src/math/MathUtils";
 import { RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
@@ -10,60 +9,66 @@ export const Flipper = ({ side = 'left' }) => {
   const flipper = useRef(null);
   const [isPressed, setIsPressed] = useState(false);
   const [subscribeKeys, getKeys] = useKeyboardControls();
-
-  // Handle flipper activation
-  const handleFlipperPress = () => {
-    setIsPressed(true);
-  };
-
-  const handleFlipperRelease = () => {
-    setIsPressed(false);
-  };
-
-  const FLIPPER_LENGTH = 0.178; // Single source of truth for flipper length
   
-  // Position and rotation values based on side
+  const FLIPPER_LENGTH = 0.178;
+  const ANGULAR_VELOCITY = 15; // Radians per second
+  
   const startPos = side === 'left' 
     ? [-FLIPPER_LENGTH, 0.0076, 0.335] 
     : [FLIPPER_LENGTH, 0.0076, 0.335];
   const floorTilt = degToRad(14);
   const baseRotation = side === 'left' ? degToRad(-35) : degToRad(35);
-  const flipAngle = side === 'left' ? degToRad(60) : degToRad(-60);
+  const maxRotation = side === 'left' ? degToRad(25) : degToRad(-25); // Target max angle
 
-  // Create spring animation for rotation
-  const { rotation } = useSpring({
-    rotation: isPressed ? baseRotation + flipAngle : baseRotation,
-    config: { tension: 1200, friction: 40 }
-  });
-
-  // Update flipper position in physics world
   useFrame(() => {
     if (flipper.current) {
       const { left, right } = getKeys();
       const keyPressed = side === 'left' ? left : right;
 
-      if (keyPressed && !isPressed) {
-        setIsPressed(true);
-      } else if (!keyPressed && isPressed) {
-        setIsPressed(false);
-      }
+      // Get current rotation
+      const currentRotation = new THREE.Euler().setFromQuaternion(
+        flipper.current.rotation()
+      ).y;
 
-      flipper.current.setNextKinematicRotation(
-        new THREE.Quaternion().setFromEuler(
-          new THREE.Euler(degToRad(14), rotation.get(), 0, 'XYZ')
-        )
-      );
+      if (keyPressed) {
+        // If pressed and not at max rotation, apply velocity
+        if ((side === 'left' && currentRotation < maxRotation) ||
+            (side === 'right' && currentRotation > maxRotation)) {
+          flipper.current.setAngvel(
+            { x: 0, y: side === 'left' ? ANGULAR_VELOCITY : -ANGULAR_VELOCITY, z: 0 },
+            true
+          );
+        } else {
+          // At max rotation - stop
+          flipper.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
+        }
+      } else {
+        // If not pressed and not at base rotation, apply reverse velocity
+        if ((side === 'left' && currentRotation > baseRotation) ||
+            (side === 'right' && currentRotation < baseRotation)) {
+          flipper.current.setAngvel(
+            { x: 0, y: side === 'left' ? -ANGULAR_VELOCITY : ANGULAR_VELOCITY, z: 0 },
+            true
+          );
+        } else {
+          // At base rotation - stop
+          flipper.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
+        }
+      }
     }
   });
 
   return (
     <group>
-      <RigidBody ref={flipper} type="kinematicPosition" position={startPos} ccd={true}>
+      <RigidBody 
+        ref={flipper} 
+        type="kinematicVelocity" 
+        position={startPos} 
+        rotation={[floorTilt, baseRotation, 0]}
+        ccd={true}
+      >
         <group>
-          <mesh 
-            onClick={handleFlipperPress} 
-            position={[side === 'left' ? FLIPPER_LENGTH/2 : -FLIPPER_LENGTH/2, 0, 0]}
-          >
+          <mesh position={[side === 'left' ? FLIPPER_LENGTH/2 : -FLIPPER_LENGTH/2, 0, 0]}>
             <boxGeometry args={[FLIPPER_LENGTH, 0.015, 0.015]} />
             <meshStandardMaterial color="purple" />
           </mesh>
@@ -71,4 +76,4 @@ export const Flipper = ({ side = 'left' }) => {
       </RigidBody>
     </group>
   );
-}; 
+};
